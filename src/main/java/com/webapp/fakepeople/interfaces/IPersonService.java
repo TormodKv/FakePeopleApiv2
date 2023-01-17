@@ -4,6 +4,7 @@ import com.webapp.fakepeople.dto.PersonLinearDTO;
 import com.webapp.fakepeople.dto.PersonTreeDTO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,4 +25,6 @@ public interface IPersonService {
     PersonLinearDTO replace(PersonLinearDTO personLinearDTO, UUID id);
 
     ArrayList<PersonLinearDTO> getPersonLinearCousinsById(UUID id);
+
+    HashMap<String, Integer> getRankedLastNames();
 }

@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,9 +25,9 @@ public class PersonController {
         return personService.getAll(limit, alive);
     }
 
-    @GetMapping("/statistics/")
-    public @ResponseBody ArrayList<PersonLinearDTO> GetStatistics(@RequestParam Optional<Integer> limit, Optional<Boolean> alive){
-        return null;
+    @GetMapping("/rankedLastNames")
+    public HashMap<String, Integer> GetRankedLastNames(){
+        return personService.getRankedLastNames();
     }
 
     @GetMapping("/{id}")

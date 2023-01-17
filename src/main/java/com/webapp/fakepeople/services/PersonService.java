@@ -14,10 +14,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,6 +58,20 @@ public class PersonService implements IPersonService {
                     );
         }
         return cousins;
+    }
+
+    @Override
+    public HashMap<String, Integer> getRankedLastNames() {
+        HashMap<String, Integer> lastNames = new HashMap<>();
+        for (Person person : personRepository.getAll()){
+            lastNames.merge(person.getLastName(), 1, Integer::sum);
+        }
+
+        lastNames = lastNames.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        return lastNames;
     }
 
     @Override
