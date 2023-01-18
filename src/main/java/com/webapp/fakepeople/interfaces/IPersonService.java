@@ -2,12 +2,14 @@ package com.webapp.fakepeople.interfaces;
 
 import com.webapp.fakepeople.dto.PersonLinearDTO;
 import com.webapp.fakepeople.dto.PersonTreeDTO;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
+@Component
 public interface IPersonService {
 
     PersonLinearDTO getPersonLinearById(UUID id);
@@ -26,5 +28,4 @@ public interface IPersonService {
 
     ArrayList<PersonLinearDTO> getPersonLinearCousinsById(UUID id);
 
-    HashMap<String, Integer> getRankedLastNames();
 }

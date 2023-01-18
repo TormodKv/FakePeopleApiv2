@@ -61,20 +61,6 @@ public class PersonService implements IPersonService {
     }
 
     @Override
-    public HashMap<String, Integer> getRankedLastNames() {
-        HashMap<String, Integer> lastNames = new HashMap<>();
-        for (Person person : personRepository.getAll()){
-            lastNames.merge(person.getLastName(), 1, Integer::sum);
-        }
-
-        lastNames = lastNames.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-
-        return lastNames;
-    }
-
-    @Override
     public PersonLinearDTO getPersonLinearById(UUID id) throws HttpClientErrorException {
         try {
             return personRepository.getById(id).toLinearDTO();

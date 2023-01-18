@@ -18,4 +18,6 @@ class AddressReaderTest {
                 addresses.stream().allMatch(a -> a.getAddressText().length() > 0) &&
                 addresses.stream().anyMatch(a -> a.getHouseNumber() != 0));
     }
+
+    //TODO write more unit tests
 }

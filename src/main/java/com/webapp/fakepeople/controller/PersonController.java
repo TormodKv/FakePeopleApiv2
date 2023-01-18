@@ -25,11 +25,6 @@ public class PersonController {
         return personService.getAll(limit, alive);
     }
 
-    @GetMapping("/rankedLastNames")
-    public HashMap<String, Integer> GetRankedLastNames(){
-        return personService.getRankedLastNames();
-    }
-
     @GetMapping("/{id}")
     public @ResponseBody PersonLinearDTO GetPersonLinearById(@PathVariable UUID id){
         return personService.getPersonLinearById(id);
