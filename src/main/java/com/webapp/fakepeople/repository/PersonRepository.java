@@ -46,6 +46,7 @@ public class PersonRepository implements IPersonRepository {
     }
 
     @Override
+    @CachePut(cacheNames = "persons", key = "#person.getId()")
     public Person create(Person person) {
         persons.add(person);
         return person;
