@@ -34,10 +34,10 @@ public class PersonService implements IPersonService {
     public ArrayList<PersonLinearDTO> getAll(Optional<Integer> limit, Optional<Boolean> alive) {
         ArrayList<Person> persons = personRepository.getAll();
         return (ArrayList<PersonLinearDTO>) persons.stream()
-                .filter(x -> alive.map(aBoolean -> x.isAlive() == aBoolean).orElse(true))
+                .filter(x -> alive.map(y -> x.isAlive() == y).orElse(true))
                 .limit(limit.isPresent() ? limit.get() : Long.MAX_VALUE)
                 .map(Person::toLinearDTO)
-                .collect(Collectors.toList()); //Should be a safe cast because persons is always ArrayList
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -52,6 +52,7 @@ public class PersonService implements IPersonService {
         Person originalPerson = personRepository.getById(id);
         ArrayList<PersonLinearDTO> cousins = new ArrayList<>();
         for (Person parent : Arrays.asList(originalPerson.getMother(), originalPerson.getFather())) {
+            if (parent.getMother() == null) return null;
             parent.getMother().getChildren()
                     .forEach(uncleOrAunt ->
                             uncleOrAunt.getChildren().forEach(cousin -> cousins.add(cousin.toLinearDTO()))
@@ -76,6 +77,14 @@ public class PersonService implements IPersonService {
 
     @Override
     public PersonLinearDTO deleteById(UUID id) {
+        Person person = personRepository.getById(id);
+        if (person.getMother() != null ||
+                person.getFather() != null ||
+                person.getSpouse() != null ||
+                person.getChildren().size() > 0
+        ) {
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "Cannot delete referenced person");
+        }
         return personRepository.deleteById(id).toLinearDTO();
     }
 
@@ -109,8 +118,7 @@ public class PersonService implements IPersonService {
                     }
 
                 } catch (Exception e) {
-                    System.out.println("Couldn't edit person: " + e);
-                    return null;
+                    throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Couldn't edit person. Make sure you are using the correct data types");
                 }
             }
         }
@@ -125,7 +133,7 @@ public class PersonService implements IPersonService {
                 personLinearDTO.getId(),
                 personLinearDTO.getMother() != null ? personRepository.getById(personLinearDTO.getMother()) : null,
                 personLinearDTO.getFather() != null ? personRepository.getById(personLinearDTO.getFather()) : null,
-                new ArrayList<Person>(personLinearDTO.getChildren().stream().map(personRepository::getById).collect(Collectors.toList())),
+                new ArrayList<>(personLinearDTO.getChildren().stream().map(personRepository::getById).collect(Collectors.toList())),
                 personLinearDTO.getSpouse() != null ? personRepository.getById(personLinearDTO.getSpouse()) : null,
                 personLinearDTO.getAddress() != null ? addressRepository.getById(personLinearDTO.getAddress().getId()) : null,
                 personLinearDTO.getDateOfBirth(),
